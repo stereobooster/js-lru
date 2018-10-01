@@ -12,6 +12,7 @@ For future inspiration:
 
 - https://github.com/isaacs/node-lru-cache (maxAge idea)
 - https://github.com/facebook/react/blob/master/packages/react-cache/src/ReactCache.js (Flow types)
+- https://github.com/lukeed/tmp-cache (more size optimizations)
 
 # Least Recently Used (LRU) cache algorithm
 
