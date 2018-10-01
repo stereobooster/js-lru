@@ -1,3 +1,6 @@
+const NEWER = Symbol("N");
+const OLDER = Symbol("O");
+
 /**
  * A doubly linked list-based Least Recently Used (LRU) cache. Will keep most
  * recently used items while discarding least recently used items when its limit
@@ -16,118 +19,117 @@
  *
  *  removed  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  added
  */
-const NEWER = Symbol("N");
-const OLDER = Symbol("O");
+export class LRUMap {
+  constructor(limit /*, entries*/) {
+    // if (typeof limit !== "number") {
+    //   // called as (entries)
+    //   entries = limit;
+    //   limit = 0;
+    // }
 
-export const LRUMap = function(limit /*, entries*/) {
-  // if (typeof limit !== "number") {
-  //   // called as (entries)
-  //   entries = limit;
-  //   limit = 0;
-  // }
+    this.size = 0;
+    this.limit = limit;
+    this.oldest = this.newest = undefined;
+    this.map = new Map();
 
-  this.size = 0;
-  this.limit = limit;
-  this.oldest = this.newest = undefined;
-  this.map = new Map();
-
-  // if (entries) {
-  //   this.assign(entries);
-  //   if (limit < 1) {
-  //     this.limit = this.size;
-  //   }
-  // }
-};
-
-LRUMap.prototype._bump = function(entry) {
-  if (entry === this.newest) {
-    // Already the most recenlty used entry, so no need to update the list
-    return;
+    // if (entries) {
+    //   this.assign(entries);
+    //   if (limit < 1) {
+    //     this.limit = this.size;
+    //   }
+    // }
   }
-  // HEAD--------------TAIL
-  //   <.older   .newer>
-  //  <--- add direction --
-  //   A  B  C  <D>  E
-  if (entry[NEWER]) {
-    if (entry === this.oldest) {
-      this.oldest = entry[NEWER];
+
+  _bump(entry) {
+    if (entry === this.newest) {
+      // Already the most recenlty used entry, so no need to update the list
+      return;
     }
-    entry[NEWER][OLDER] = entry[OLDER]; // C <-- E.
+    // HEAD--------------TAIL
+    //   <.older   .newer>
+    //  <--- add direction --
+    //   A  B  C  <D>  E
+    if (entry[NEWER]) {
+      if (entry === this.oldest) {
+        this.oldest = entry[NEWER];
+      }
+      entry[NEWER][OLDER] = entry[OLDER]; // C <-- E.
+    }
+    if (entry[OLDER]) {
+      entry[OLDER][NEWER] = entry[NEWER]; // C. --> E
+    }
+    entry[NEWER] = undefined; // D --x
+    entry[OLDER] = this.newest; // D. --> E
+    if (this.newest) {
+      this.newest[NEWER] = entry; // E. <-- D
+    }
+    this.newest = entry;
   }
-  if (entry[OLDER]) {
-    entry[OLDER][NEWER] = entry[NEWER]; // C. --> E
-  }
-  entry[NEWER] = undefined; // D --x
-  entry[OLDER] = this.newest; // D. --> E
-  if (this.newest) {
-    this.newest[NEWER] = entry; // E. <-- D
-  }
-  this.newest = entry;
-};
 
-LRUMap.prototype.get = function(key) {
-  // First, find our cache entry
-  let entry = this.map.get(key);
-  if (!entry) return; // Not cached. Sorry.
-  // As <key> was found in the cache, register it as being requested recently
-  this._bump(entry);
-  return entry.value;
-};
-
-LRUMap.prototype.set = function(key, value) {
-  let entry = this.map.get(key);
-
-  if (entry) {
-    // update existing
-    entry.value = value;
+  get(key) {
+    // First, find our cache entry
+    let entry = this.map.get(key);
+    if (!entry) return; // Not cached. Sorry.
+    // As <key> was found in the cache, register it as being requested recently
     this._bump(entry);
+    return entry.value;
+  }
+
+  set(key, value) {
+    let entry = this.map.get(key);
+
+    if (entry) {
+      // update existing
+      entry.value = value;
+      this._bump(entry);
+      return this;
+    }
+
+    // new entry
+    this.map.set(key, (entry = { key, value }));
+
+    if (this.newest) {
+      // link previous tail to the new tail (entry)
+      this.newest[NEWER] = entry;
+      entry[OLDER] = this.newest;
+    } else {
+      // we're first in -- yay
+      this.oldest = entry;
+    }
+
+    // add new entry to the end of the linked list -- it's now the freshest entry.
+    this.newest = entry;
+    ++this.size;
+    if (this.size > this.limit) {
+      // we hit the limit -- remove the head
+      this.shift();
+    }
+
     return this;
   }
 
-  // new entry
-  this.map.set(key, (entry = { key, value }));
-
-  if (this.newest) {
-    // link previous tail to the new tail (entry)
-    this.newest[NEWER] = entry;
-    entry[OLDER] = this.newest;
-  } else {
-    // we're first in -- yay
-    this.oldest = entry;
-  }
-
-  // add new entry to the end of the linked list -- it's now the freshest entry.
-  this.newest = entry;
-  ++this.size;
-  if (this.size > this.limit) {
-    // we hit the limit -- remove the head
-    this.shift();
-  }
-
-  return this;
-};
-
-LRUMap.prototype.shift = function() {
-  // todo: handle special case when limit == 1
-  let entry = this.oldest;
-  if (entry) {
-    if (this.oldest[NEWER]) {
-      // advance the list
-      this.oldest = this.oldest[NEWER];
-      this.oldest[OLDER] = undefined;
-    } else {
-      // the cache is exhausted
-      this.oldest = undefined;
-      this.newest = undefined;
+  shift() {
+    // todo: handle special case when limit == 1
+    let entry = this.oldest;
+    if (entry) {
+      if (this.oldest[NEWER]) {
+        // advance the list
+        this.oldest = this.oldest[NEWER];
+        this.oldest[OLDER] = undefined;
+      } else {
+        // the cache is exhausted
+        this.oldest = undefined;
+        this.newest = undefined;
+      }
+      // Remove last strong reference to <entry> and remove links from the purged
+      // entry being returned:
+      entry[NEWER] = entry[OLDER] = undefined;
+      this.map.delete(entry.key);
+      --this.size;
+      return [entry.key, entry.value];
     }
-    // Remove last strong reference to <entry> and remove links from the purged
-    // entry being returned:
-    entry[NEWER] = entry[OLDER] = undefined;
-    this.map.delete(entry.key);
-    --this.size;
-    return [entry.key, entry.value];
   }
-};
+}
 
 // LRUMap.prototype.assign = function(entries) {
 //   let entry,
