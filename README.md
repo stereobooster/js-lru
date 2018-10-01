@@ -1,12 +1,17 @@
 # Fork with minimal functionality for small size
 
-Support only `get`, `set` and `limit` in the constructor.
+It supports only `get`, `set` and `limit` in the constructor.
 
 ```
 389 B: lru_map.js
 390 B: lru_map.m.js
 458 B: lru_map.umd.js
 ```
+
+For future inspiration:
+
+- https://github.com/isaacs/node-lru-cache (maxAge idea)
+- https://github.com/facebook/react/blob/master/packages/react-cache/src/ReactCache.js (Flow types)
 
 # Least Recently Used (LRU) cache algorithm
 
