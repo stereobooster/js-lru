@@ -3,9 +3,9 @@
 Support only `get`, `set` and `limit` in the constructor.
 
 ```
-420 B: lru_map.js
-421 B: lru_map.m.js
-488 B: lru_map.umd.js
+393 B: lru_map.js
+394 B: lru_map.m.js
+460 B: lru_map.umd.js
 ```
 
 # Least Recently Used (LRU) cache algorithm

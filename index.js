@@ -19,13 +19,6 @@
 const NEWER = Symbol("N");
 const OLDER = Symbol("O");
 
-function Entry(key, value) {
-  this.key = key;
-  this.value = value;
-  this[NEWER] = undefined;
-  this[OLDER] = undefined;
-}
-
 export const LRUMap = function(limit /*, entries*/) {
   // if (typeof limit !== "number") {
   //   // called as (entries)
@@ -36,7 +29,7 @@ export const LRUMap = function(limit /*, entries*/) {
   this.size = 0;
   this.limit = limit;
   this.oldest = this.newest = undefined;
-  this._keymap = new Map();
+  this.map = new Map();
 
   // if (entries) {
   //   this.assign(entries);
@@ -46,7 +39,7 @@ export const LRUMap = function(limit /*, entries*/) {
   // }
 };
 
-LRUMap.prototype._markEntryAsUsed = function(entry) {
+LRUMap.prototype._bump = function(entry) {
   if (entry === this.newest) {
     // Already the most recenlty used entry, so no need to update the list
     return;
@@ -74,25 +67,25 @@ LRUMap.prototype._markEntryAsUsed = function(entry) {
 
 LRUMap.prototype.get = function(key) {
   // First, find our cache entry
-  let entry = this._keymap.get(key);
+  let entry = this.map.get(key);
   if (!entry) return; // Not cached. Sorry.
   // As <key> was found in the cache, register it as being requested recently
-  this._markEntryAsUsed(entry);
+  this._bump(entry);
   return entry.value;
 };
 
 LRUMap.prototype.set = function(key, value) {
-  let entry = this._keymap.get(key);
+  let entry = this.map.get(key);
 
   if (entry) {
     // update existing
     entry.value = value;
-    this._markEntryAsUsed(entry);
+    this._bump(entry);
     return this;
   }
 
   // new entry
-  this._keymap.set(key, (entry = new Entry(key, value)));
+  this.map.set(key, (entry = { key, value }));
 
   if (this.newest) {
     // link previous tail to the new tail (entry)
@@ -130,7 +123,7 @@ LRUMap.prototype.shift = function() {
     // Remove last strong reference to <entry> and remove links from the purged
     // entry being returned:
     entry[NEWER] = entry[OLDER] = undefined;
-    this._keymap.delete(entry.key);
+    this.map.delete(entry.key);
     --this.size;
     return [entry.key, entry.value];
   }
@@ -139,11 +132,11 @@ LRUMap.prototype.shift = function() {
 // LRUMap.prototype.assign = function(entries) {
 //   let entry,
 //     limit = this.limit || Number.MAX_VALUE;
-//   this._keymap.clear();
+//   this.map.clear();
 //   let it = entries[Symbol.iterator]();
 //   for (let itv = it.next(); !itv.done; itv = it.next()) {
-//     let e = new Entry(itv.value[0], itv.value[1]);
-//     this._keymap.set(e.key, e);
+//     let e = { key: itv.value[0], value: itv.value[1] };
+//     this.map.set(e.key, e);
 //     if (!entry) {
 //       this.oldest = e;
 //     } else {
@@ -156,7 +149,7 @@ LRUMap.prototype.shift = function() {
 //     }
 //   }
 //   this.newest = entry;
-//   this.size = this._keymap.size;
+//   this.size = this.map.size;
 // };
 
 // ----------------------------------------------------------------------------
@@ -164,18 +157,18 @@ LRUMap.prototype.shift = function() {
 // functionality.
 
 // LRUMap.prototype.find = function(key) {
-//   let e = this._keymap.get(key);
+//   let e = this.map.get(key);
 //   return e ? e.value : undefined;
 // };
 
 // LRUMap.prototype.has = function(key) {
-//   return this._keymap.has(key);
+//   return this.map.has(key);
 // };
 
 // LRUMap.prototype["delete"] = function(key) {
-//   let entry = this._keymap.get(key);
+//   let entry = this.map.get(key);
 //   if (!entry) return;
-//   this._keymap.delete(entry.key);
+//   this.map.delete(entry.key);
 //   if (entry[NEWER] && entry[OLDER]) {
 //     // relink the older entry with the newer entry
 //     entry[OLDER][NEWER] = entry[NEWER];
@@ -203,7 +196,7 @@ LRUMap.prototype.shift = function() {
 //   // Not clearing links should be safe, as we don't expose live links to user
 //   this.oldest = this.newest = undefined;
 //   this.size = 0;
-//   this._keymap.clear();
+//   this.map.clear();
 // };
 
 // function EntryIterator(oldestEntry) {
