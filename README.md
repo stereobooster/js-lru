@@ -14,7 +14,7 @@ A finite key-value map using the [Least Recently Used (LRU)](http://en.wikipedia
 
 Useful when you want to limit use of memory to only hold commonly-used things.
 
-[![Build status](https://travis-ci.org/stereobooster/lru_map.svg?branch=master)](https://travis-ci.org/stereobooster/lru_map)
+[![Build status](https://travis-ci.org/stereobooster/lru_map.svg?branch=stereobooster)](https://travis-ci.org/stereobooster/lru_map)
 
 ## Terminology & design
 
