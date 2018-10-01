@@ -26,7 +26,7 @@ function Entry(key, value) {
   this[OLDER] = undefined;
 }
 
-export const LRUMap = function(limit/*, entries*/) {
+export const LRUMap = function(limit /*, entries*/) {
   // if (typeof limit !== "number") {
   //   // called as (entries)
   //   entries = limit;

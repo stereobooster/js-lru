@@ -12,7 +12,7 @@ export class LRUMap<K, V> {
   // `entries` should be an Array or other iterable object whose elements are
   // key-value pairs (2-element Arrays). Each key-value pair is added to the new Map.
   // null is treated as undefined.
-  constructor(limit: number/*, entries?: Iterable<[K, V]>*/);
+  constructor(limit: number /*, entries?: Iterable<[K, V]>*/);
 
   // Convenience constructor equivalent to `new LRUMap(count(entries), entries)`
   // constructor(entries: Iterable<[K, V]>);

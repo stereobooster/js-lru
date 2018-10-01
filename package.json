@@ -5,12 +5,12 @@
   "main": "dist/lru_map.js",
   "umd:main": "dist/lru_map.umd.js",
   "module": "dist/lru_map.m.js",
-  "source": "lru.js",
-  "typings": "lru.d.ts",
+  "source": "index.js",
+  "typings": "index.d.ts",
   "files": [
     "dist",
     "README.md",
-    "lru.d.ts"
+    "index.d.ts"
   ],
   "scripts": {
     "test": "jest",
