@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rsms/js-lru.git"
+    "url": "git+https://github.com/stereobooster/lru_map.git"
   },
   "keywords": [
     "cache",
@@ -34,9 +34,9 @@
   "author": "Rasmus Andersson <me@rsms.me>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rsms/js-lru/issues"
+    "url": "https://github.com/stereobooster/lru_map/issues"
   },
-  "homepage": "https://github.com/rsms/js-lru#readme",
+  "homepage": "https://github.com/stereobooster/lru_map#readme",
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
