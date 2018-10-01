@@ -16,17 +16,11 @@
  *
  *  removed  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  added
  */
-(function(g,f){
-  const e = typeof exports == 'object' ? exports : typeof g == 'object' ? g : {};
-  f(e);
-  if (typeof define == 'function' && define.amd) { define('lru', e); }
-})(this, function(exports) {
+const NEWER = Symbol("newer");
+const OLDER = Symbol("older");
 
-const NEWER = Symbol('newer');
-const OLDER = Symbol('older');
-
-function LRUMap(limit, entries) {
-  if (typeof limit !== 'number') {
+export const LRUMap = function(limit, entries) {
+  if (typeof limit !== "number") {
     // called as (entries)
     entries = limit;
     limit = 0;
@@ -43,9 +37,7 @@ function LRUMap(limit, entries) {
       this.limit = this.size;
     }
   }
-}
-
-exports.LRUMap = LRUMap;
+};
 
 function Entry(key, value) {
   this.key = key;
@@ -53,7 +45,6 @@ function Entry(key, value) {
   this[NEWER] = undefined;
   this[OLDER] = undefined;
 }
-
 
 LRUMap.prototype._markEntryAsUsed = function(entry) {
   if (entry === this.newest) {
@@ -82,7 +73,8 @@ LRUMap.prototype._markEntryAsUsed = function(entry) {
 };
 
 LRUMap.prototype.assign = function(entries) {
-  let entry, limit = this.limit || Number.MAX_VALUE;
+  let entry,
+    limit = this.limit || Number.MAX_VALUE;
   this._keymap.clear();
   let it = entries[Symbol.iterator]();
   for (let itv = it.next(); !itv.done; itv = it.next()) {
@@ -96,7 +88,7 @@ LRUMap.prototype.assign = function(entries) {
     }
     entry = e;
     if (limit-- == 0) {
-      throw new Error('overflow');
+      throw new Error("overflow");
     }
   }
   this.newest = entry;
@@ -180,7 +172,7 @@ LRUMap.prototype.has = function(key) {
   return this._keymap.has(key);
 };
 
-LRUMap.prototype['delete'] = function(key) {
+LRUMap.prototype["delete"] = function(key) {
   var entry = this._keymap.get(key);
   if (!entry) return;
   this._keymap.delete(entry.key);
@@ -198,7 +190,8 @@ LRUMap.prototype['delete'] = function(key) {
     entry[OLDER][NEWER] = undefined;
     // link the newer entry to head
     this.newest = entry[OLDER];
-  } else {// if(entry[OLDER] === undefined && entry.newer === undefined) {
+  } else {
+    // if(entry[OLDER] === undefined && entry.newer === undefined) {
     this.oldest = this.newest = undefined;
   }
 
@@ -213,9 +206,12 @@ LRUMap.prototype.clear = function() {
   this._keymap.clear();
 };
 
-
-function EntryIterator(oldestEntry) { this.entry = oldestEntry; }
-EntryIterator.prototype[Symbol.iterator] = function() { return this; }
+function EntryIterator(oldestEntry) {
+  this.entry = oldestEntry;
+}
+EntryIterator.prototype[Symbol.iterator] = function() {
+  return this;
+};
 EntryIterator.prototype.next = function() {
   let ent = this.entry;
   if (ent) {
@@ -226,9 +222,12 @@ EntryIterator.prototype.next = function() {
   }
 };
 
-
-function KeyIterator(oldestEntry) { this.entry = oldestEntry; }
-KeyIterator.prototype[Symbol.iterator] = function() { return this; }
+function KeyIterator(oldestEntry) {
+  this.entry = oldestEntry;
+}
+KeyIterator.prototype[Symbol.iterator] = function() {
+  return this;
+};
 KeyIterator.prototype.next = function() {
   let ent = this.entry;
   if (ent) {
@@ -239,8 +238,12 @@ KeyIterator.prototype.next = function() {
   }
 };
 
-function ValueIterator(oldestEntry) { this.entry = oldestEntry; }
-ValueIterator.prototype[Symbol.iterator] = function() { return this; }
+function ValueIterator(oldestEntry) {
+  this.entry = oldestEntry;
+}
+ValueIterator.prototype[Symbol.iterator] = function() {
+  return this;
+};
 ValueIterator.prototype.next = function() {
   let ent = this.entry;
   if (ent) {
@@ -250,7 +253,6 @@ ValueIterator.prototype.next = function() {
     return { done: true, value: undefined };
   }
 };
-
 
 LRUMap.prototype.keys = function() {
   return new KeyIterator(this.oldest);
@@ -269,7 +271,7 @@ LRUMap.prototype[Symbol.iterator] = function() {
 };
 
 LRUMap.prototype.forEach = function(fun, thisObj) {
-  if (typeof thisObj !== 'object') {
+  if (typeof thisObj !== "object") {
     thisObj = this;
   }
   let entry = this.oldest;
@@ -281,7 +283,9 @@ LRUMap.prototype.forEach = function(fun, thisObj) {
 
 /** Returns a JSON (array) representation */
 LRUMap.prototype.toJSON = function() {
-  var s = new Array(this.size), i = 0, entry = this.oldest;
+  var s = new Array(this.size),
+    i = 0,
+    entry = this.oldest;
   while (entry) {
     s[i++] = { key: entry.key, value: entry.value };
     entry = entry[NEWER];
@@ -291,15 +295,14 @@ LRUMap.prototype.toJSON = function() {
 
 /** Returns a String representation */
 LRUMap.prototype.toString = function() {
-  var s = '', entry = this.oldest;
+  var s = "",
+    entry = this.oldest;
   while (entry) {
-    s += String(entry.key)+':'+entry.value;
+    s += String(entry.key) + ":" + entry.value;
     entry = entry[NEWER];
     if (entry) {
-      s += ' < ';
+      s += " < ";
     }
   }
   return s;
 };
-
-});

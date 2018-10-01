@@ -2,12 +2,24 @@
   "name": "lru_map",
   "version": "0.3.3",
   "description": "Finite key-value map using the Least Recently Used (LRU) algorithm where the most recently used objects are keept in the map while less recently used items are evicted to make room for new ones.",
-  "main": "lru.js",
+  "main": "dist/lru_map.js",
+  "umd:main": "dist/lru_map.umd.js",
+  "module": "dist/lru_map.m.js",
+  "source": "lru.js",
   "typings": "lru.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "lru.d.ts"
+  ],
   "scripts": {
-    "test": "node test.js && echo 'Verifying TypeScript definition...' && tsc --noEmit",
-    "prepublish": "npm test",
-    "benchmark": "node --expose-gc benchmark.js"
+    "test": "jest",
+    "test:ts": "tsc --noEmit",
+    "prepublish": "yarn test && yarn test:ts",
+    "benchmark": "node --expose-gc benchmark.js",
+    "build": "yarn microbundle",
+    "prepublishOnly": "yarn build",
+    "format": "prettier {*.{js,ts},README.md} --write"
   },
   "repository": {
     "type": "git",
@@ -26,6 +38,9 @@
   },
   "homepage": "https://github.com/rsms/js-lru#readme",
   "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "jest": "^23.6.0",
+    "microbundle": "^0.6.0",
     "typescript": "^2.0.10"
   }
 }
