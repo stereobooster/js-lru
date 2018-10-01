@@ -2,7 +2,7 @@
 // $ node --expose-gc benchmark.js
 var assert = require("assert"),
   util = require("util"),
-  LRUMap = require("./lru").LRUMap;
+  LRUMap = require("./dist/lru_map");
 
 // Create a cache with N entries
 var N = 10000;

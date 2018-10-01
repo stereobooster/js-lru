@@ -1,4 +1,4 @@
-import { LRUMap } from "./index.js";
+import LRUMap from "./index.js";
 
 const asserteq = (a, b) => expect(a).toEqual(b);
 const assert = a => expect(a).toBeTruthy();

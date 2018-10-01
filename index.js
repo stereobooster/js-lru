@@ -19,7 +19,7 @@ const OLDER = Symbol("O");
  *
  *  removed  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  <--  added
  */
-export class LRUMap {
+export default class LRUMap {
   constructor(limit /*, entries*/) {
     // if (typeof limit !== "number") {
     //   // called as (entries)
