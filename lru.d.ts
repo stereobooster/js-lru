@@ -12,10 +12,10 @@ export class LRUMap<K, V> {
   // `entries` should be an Array or other iterable object whose elements are
   // key-value pairs (2-element Arrays). Each key-value pair is added to the new Map.
   // null is treated as undefined.
-  constructor(limit: number, entries?: Iterable<[K, V]>);
+  constructor(limit: number/*, entries?: Iterable<[K, V]>*/);
 
   // Convenience constructor equivalent to `new LRUMap(count(entries), entries)`
-  constructor(entries: Iterable<[K, V]>);
+  // constructor(entries: Iterable<[K, V]>);
 
   // Current number of items
   size: number;
@@ -31,7 +31,7 @@ export class LRUMap<K, V> {
 
   // Replace all values in this map with key-value pairs (2-element Arrays) from
   // provided iterable.
-  assign(entries: Iterable<[K, V]>): void;
+  // assign(entries: Iterable<[K, V]>): void;
 
   // Put <value> into the cache associated with <key>. Replaces any existing entry
   // with the same key. Returns `this`.
@@ -45,42 +45,42 @@ export class LRUMap<K, V> {
   // Returns the value associated with <key> or undefined if not in cache.
   get(key: K): V | undefined;
 
-  // Check if there's a value for key in the cache without registering recent use.
-  has(key: K): boolean;
+  // // Check if there's a value for key in the cache without registering recent use.
+  // has(key: K): boolean;
 
-  // Access value for <key> without registering recent use. Useful if you do not
-  // want to chage the state of the map, but only "peek" at it.
-  // Returns the value associated with <key> if found, or undefined if not found.
-  find(key: K): V | undefined;
+  // // Access value for <key> without registering recent use. Useful if you do not
+  // // want to chage the state of the map, but only "peek" at it.
+  // // Returns the value associated with <key> if found, or undefined if not found.
+  // find(key: K): V | undefined;
 
-  // Remove entry <key> from cache and return its value.
-  // Returns the removed value, or undefined if not found.
-  delete(key: K): V | undefined;
+  // // Remove entry <key> from cache and return its value.
+  // // Returns the removed value, or undefined if not found.
+  // delete(key: K): V | undefined;
 
-  // Removes all entries
-  clear(): void;
+  // // Removes all entries
+  // clear(): void;
 
-  // Returns an iterator over all keys, starting with the oldest.
-  keys(): Iterator<K>;
+  // // Returns an iterator over all keys, starting with the oldest.
+  // keys(): Iterator<K>;
 
-  // Returns an iterator over all values, starting with the oldest.
-  values(): Iterator<V>;
+  // // Returns an iterator over all values, starting with the oldest.
+  // values(): Iterator<V>;
 
-  // Returns an iterator over all entries, starting with the oldest.
-  entries(): Iterator<[K, V]>;
+  // // Returns an iterator over all entries, starting with the oldest.
+  // entries(): Iterator<[K, V]>;
 
-  // Returns an iterator over all entries, starting with the oldest.
-  [Symbol.iterator](): Iterator<[K, V]>;
+  // // Returns an iterator over all entries, starting with the oldest.
+  // [Symbol.iterator](): Iterator<[K, V]>;
 
-  // Call `fun` for each entry, starting with the oldest entry.
-  forEach(
-    fun: (value: V, key: K, m: LRUMap<K, V>) => void,
-    thisArg?: any
-  ): void;
+  // // Call `fun` for each entry, starting with the oldest entry.
+  // forEach(
+  //   fun: (value: V, key: K, m: LRUMap<K, V>) => void,
+  //   thisArg?: any
+  // ): void;
 
-  // Returns an object suitable for JSON encoding
-  toJSON(): Array<{ key: K; value: V }>;
+  // // Returns an object suitable for JSON encoding
+  // toJSON(): Array<{ key: K; value: V }>;
 
-  // Returns a human-readable text representation
-  toString(): string;
+  // // Returns a human-readable text representation
+  // toString(): string;
 }

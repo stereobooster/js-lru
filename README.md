@@ -1,3 +1,13 @@
+# Fork with minimal functionality for small size
+
+Support only `get`, `set` and `limit` in the constructor.
+
+```
+415 B: lru_map.js
+416 B: lru_map.m.js
+486 B: lru_map.umd.js
+```
+
 # Least Recently Used (LRU) cache algorithm
 
 A finite key-value map using the [Least Recently Used (LRU)](http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used) algorithm, where the most recently-used items are "kept alive" while older, less-recently used items are evicted to make room for newer items.
